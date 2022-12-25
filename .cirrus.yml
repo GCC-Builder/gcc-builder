@@ -6,20 +6,23 @@ env:
     LC_ALL: "en_US.UTF-8"
     LANG: "en_US.UTF-8"
     LANGUAGE: "en_US.UTF-8"
-    GITHUB_TOKEN: ""
+    GITHUB_TOKEN: "ENCRYPTED[!684ba45cd8fe00e8c68f33033c46053f3a81ba8c5376b13d9b3d37213eb1b631bf2fc8e850971fe103f7d6158ce1f55d!]"
+    TELEGRAM_TOKEN: "ENCRYPTED[!7f117be18e0d6caf682bf010ea61126fd71605535d92a8b3edb21d516188074f0c221031b0bb37bbe1d3c64a41be991a!]"
+    TELEGRAM_ID: "ENCRYPTED[!ac9b0c327be80834350228692de06f19feeae354613c9452c5c9d5b03985be60e79248a7e93f652fe0e318e34332390a!]"
 
 task:
-  name: Compile aarch64-linux-gnu
+  name: Compile aarch64-linux-gnu GCC 9
 
   only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
   skip: $CIRRUS_BRANCH != 'master'
   arm_container:
-    image: arm64v8/debian:bullseye-slim
+    image: arm64v8/ubuntu:22.04
     cpu: 4
     memory: 8G
   install_packages_script:
     - rm -rf /tmp/ci/*
-    - apt update && apt install libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl expat flex g++ gawk gcc git-core gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp ncurses-dev patch patchelf pkg-config python python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev -y
+    - apt-get update
+    - apt-get install -yq libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
     - echo "dopaemon" > /etc/hostname
     - git config --global user.name "dopaemon"
     - git config --global user.email "polarisdp@gmail.com"
@@ -30,10 +33,43 @@ task:
     - unset C_INCLUDE_PATH
     - cd /tmp/ci
     - mkdir -p build
-    - git clone -b master --single-branch https://github.com/dopaemon/aarch64-dopaemon-linux-gnu gcc
+    - git clone -b master --single-branch https://github.com/GCC-Builder/aarch64-dopaemon-linux-gnu gcc
     - cp -r gcc/gcc_builder.sh build/
     - chmod +x build/gcc_builder.sh
     - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-9 build/gcc --depth=1
     - cd build/
-    - ./gcc_builder.sh aarch64-dopaemon-linux-gnu master | ts '[%Y-%m-%d %H:%M:%S]'
+    - ./gcc_builder.sh aarch64-linux-gnu GCC-9 | ts '[%Y-%m-%d %H:%M:%S]'
+    - ls
+
+task:
+  name: Compile aarch64-linux-gnu GCC 10
+
+  only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
+  skip: $CIRRUS_BRANCH != 'master'
+  depends_on:
+    - Compile aarch64-linux-gnu GCC 9
+  arm_container:
+    image: arm64v8/ubuntu:22.04
+    cpu: 4
+    memory: 8G
+  install_packages_script:
+    - rm -rf /tmp/ci/*
+    - apt-get update
+    - apt-get install -yq libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
+    - echo "dopaemon" > /etc/hostname
+    - git config --global user.name "dopaemon"
+    - git config --global user.email "polarisdp@gmail.com"
+    - git config --global credential.helper store
+  locate_script:
+    - apt-get install -y locales locales-all
+  gcc_9_aarch64_packages_script:
+    - unset C_INCLUDE_PATH
+    - cd /tmp/ci
+    - mkdir -p build
+    - git clone -b master --single-branch https://github.com/GCC-Builder/aarch64-do>
+    - cp -r gcc/gcc_builder.sh build/
+    - chmod +x build/gcc_builder.sh
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --de>
+    - cd build/
+    - ./gcc_builder.sh aarch64-linux-gnu GCC-10 | ts '[%Y-%m-%d %H:%M:%>
     - ls

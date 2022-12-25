@@ -1,13 +1,16 @@
 echo "**GCC Cross-Compiler Builder**"
 echo "**********dopaemonCI***********"
 
-GCC_OUTPUT_PATH=/tmp/ci/build/gcc-bin
-SRC_PATH=/tmp/ci/build/src
-GCC_PATH=/tmp/ci/build/gcc
+GCC_OUTPUT_PATH=/home/ubuntu/gcc-builder/build/gcc-bin
+SRC_PATH=/home/ubuntu/gcc-builder/build/src
+GCC_PATH=/home/ubuntu/gcc-builder/build/gcc
+
+rm -rf ${GCC_OUTPUT_PATH} ${SRC_PATH} ${GCC_PATH}
+
 TARGET=$1
 
 function sendTG() {
-    curl -s "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendmessage" --data "text=${*}&chat_id=-1001427544283&disable_web_page_preview=true&parse_mode=Markdown" > /dev/null
+    curl -s "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendmessage" --data "text=${*}&chat_id=-100${TELEGRAM_ID}&disable_web_page_preview=true&parse_mode=Markdown" > /dev/null
 }
 
 rm -rf $GCC_OUTPUT_PATH && mkdir $GCC_OUTPUT_PATH && cd $GCC_OUTPUT_PATH && rm -rf /tmp/build-*
@@ -22,40 +25,43 @@ cd $GCC_PATH
 
 echo "Updating GCC to latest head...."
 
-cd $SRC_PATH 
+cd $SRC_PATH
 echo "Getting Linux Tarball...."
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/ -b linux-4.19.y --depth=1
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/ -b linux-5.15.y --depth=1
 
 echo "Getting Glibc from sourceware....."
 git clone git://sourceware.org/git/glibc.git --depth=1 -b master
 
 echo "Cloning MPFR...."
-curl -sLo mpfr.tar.xz https://www.mpfr.org/mpfr-current/mpfr-4.0.2.tar.xz
+curl -sLo mpfr.tar.xz https://www.mpfr.org/mpfr-current/mpfr-4.1.1.tar.xz
 
 echo "Cloning GMP...."
-curl -sLo gmp.tar.xz https://gmplib.org/download/gmp/gmp-6.2.0.tar.xz
+curl -sLo gmp.tar.xz https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
 
 echo "Cloning MPC...."
-curl -sLo mpc.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.1.0.tar.gz
+curl -sLo mpc.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
 
 echo "Cloning ISL...."
-curl -sLo isl.tar.xz http://isl.gforge.inria.fr/isl-0.22.1.tar.xz
+curl -sLo isl.tar.xz https://ftp.radix.pro/sources/packages/l/isl/isl-0.25.tar.xz
 
 for f in *.tar*; do tar xf $f; done
 
 cd $GCC_PATH
 
-ln -s $SRC_PATH/gmp-6.2.0 gmp
-ln -s $SRC_PATH/mpc-1.1.0 mpc 
-ln -s $SRC_PATH/mpfr-4.0.2 mpfr 
-ln -s $SRC_PATH/isl-0.22.1 isl 
+ln -s $SRC_PATH/gmp-6.2.1 gmp
+ln -s $SRC_PATH/mpc-1.3.1 mpc
+ln -s $SRC_PATH/mpfr-4.1.1 mpfr
+ln -s $SRC_PATH/isl-0.25 isl
 
 export PATH=$GCC_OUTPUT_PATH/bin:$PATH
 
 echo "Building Binutils...."
 cd $SRC_PATH/binutils 
 mkdir /tmp/build-binutils && cd /tmp/build-binutils
-$SRC_PATH/binutils/configure --prefix=$GCC_OUTPUT_PATH --target=$TARGET --disable-multilib &> /dev/null
+$SRC_PATH/binutils/configure \
+   --prefix=$GCC_OUTPUT_PATH \
+   --target=$TARGET \
+   --disable-multilib &> /dev/null
 make -j$(nproc) > /dev/null
 make install > /dev/null
 
@@ -63,42 +69,43 @@ echo "Building Linux Headers....."
 cd $SRC_PATH/linux
 make ARCH=arm64 INSTALL_HDR_PATH=$GCC_OUTPUT_PATH/$TARGET  headers_install > /dev/null
 
-while true; do echo "Building Cross-Compiler in Progress....."; sleep 120; done &
+# while true; do echo "Building Cross-Compiler in Progress....."; sleep 120; done &
 
 echo "Building GCC..."
 mkdir /tmp/build-gcc
 cd /tmp/build-gcc 
 
 $GCC_PATH/configure \
---prefix=$GCC_OUTPUT_PATH \
---target=$TARGET \
---disable-shared \
---disable-nls \
---disable-bootstrap \
---disable-browser-plugin \
---disable-cloog-version-check \
---disable-isl-version-check \
---disable-libgomp \
---disable-libitm \
---disable-libmudflap \
---disable-libsanitizer \
---disable-libssp \
---disable-libstdc__-v3 \
---disable-multilib \
---disable-ppl-version-check \
---disable-sjlj-exceptions \
---disable-vtable-verify \
---disable-werror \
---enable-gold \
---enable-lto \
---enable-checking=yes \
---enable-graphite=yes \
---enable-plugins \
---enable-languages=c \
---with-gmp=$GCC_PATH/gmp \
---with-mpfr=$GCC_PATH/mpfr \
---with-mpc=$GCC_PATH/mpc \
---with-isl=$GCC_PATH/isl > /dev/null
+   --prefix=$GCC_OUTPUT_PATH \
+   --target=$TARGET \
+   --disable-shared \
+   --with-arch=armv8-a+fp+simd \
+   --disable-nls \
+   --disable-bootstrap \
+   --disable-browser-plugin \
+   --disable-cloog-version-check \
+   --disable-isl-version-check \
+   --disable-libgomp \
+   --disable-libitm \
+   --disable-libmudflap \
+   --disable-libsanitizer \
+   --disable-libssp \
+   --disable-libstdc__-v3 \
+   --disable-multilib \
+   --disable-ppl-version-check \
+   --disable-sjlj-exceptions \
+   --disable-vtable-verify \
+   --disable-werror \
+   --enable-gold \
+   --enable-lto \
+   --enable-checking=yes \
+   --enable-graphite=yes \
+   --enable-plugins \
+   --enable-languages=c \
+   --with-gmp=$GCC_PATH/gmp \
+   --with-mpfr=$GCC_PATH/mpfr \
+   --with-mpc=$GCC_PATH/mpc \
+   --with-isl=$GCC_PATH/isl > /dev/null
 
 echo "Building GCC Step-1...."
 make -j$(nproc) all-gcc > /dev/null
@@ -123,7 +130,7 @@ $TARGET-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $GCC_OUTPUT_PATH/$
 touch $GCC_OUTPUT_PATH/$TARGET/include/gnu/stubs.h
 
 echo "Building GCC Stage-2...."
-cd /tmp/build-gcc 
+cd /tmp/build-gcc
 make -j$(nproc) all-target-libgcc > /dev/null
 make install-target-libgcc > /dev/null
 
@@ -139,26 +146,26 @@ if [[ -n $(${GCC_OUTPUT_PATH}/bin/${TARGET}-gcc --version) ]]; then
 	cd ${GCC_OUTPUT_PATH}
 	git init
 	git add .
-	git commit -m "dopaemonCI: ${TARGET}-$2 $(date +%d%m%y)" --signoff
+	git commit -sm "GCC: ${TARGET}-$2 $(date +%d%m%y)" --signoff
 	if [[ "$2" == "master" ]]; then
 		git checkout -b $(date +%d%m%y)
-		if [[ "$1" == "aarch64-dopaemon-linux-gnu" ]]; then
-			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/aarch64-dopaemon-linux-android.git
-			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/dopaemon/aarch64-dopaemon-linux-android.git)%0A%0A`Branch: $(date +%d%m%y)`"
+		if [[ "$1" == "aarch64-linux-gnu" ]]; then
+			git remote add origin https://dopaemon:${GITHUB_TOKEN}@github.com/GCC-Builder/aarch64-linux-gnu.git
+			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/GCC-Builder/aarch64-linux-gnu.git)%0A%0A`Branch: $(date +%d%m%y)`"
 		else
-			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/arm-dopaemon-linux-gnueabi.git
-			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/dopaemon/arm-dopaemon-linux-gnueabi.git)%0A%0A`Branch: $(date +%d%m%y)`"
+			git remote add origin https://dopaemon:${GITHUB_TOKEN}@github.com/GCC-Builder/arm-linux-gnueabi.git
+			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/GCC-Builder/arm-linux-gnueabi.git)%0A%0A`Branch: $(date +%d%m%y)`"
 		fi
 		git push -f origin $(date +%d%m%y)
 	else
-		git checkout -b $(date +%d%m%y)-9
-		if [[ "$1" == "aarch64-dopaemon-linux-gnu" ]]; then
-			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/aarch64-dopaemon-linux-android.git
-			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/dopaemon/aarch64-dopaemon-linux-android.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
+		git checkout -b $(date +%d%m%y)-$2
+		if [[ "$1" == "aarch64-linux-gnu" ]]; then
+			git remote add origin https://dopaemon:${GITHUB_TOKEN}@github.com/GCC-Builder/aarch64-linux-gnu.git
+			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/GCC-Builder/aarch64-linux-gnu.git)%0A%0A\`Branch: $(date +%d%m%y)-$2\`"
 		else
-			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/arm-dopaemon-linux-gnueabi.git
-			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/dopaemon/arm-dopaemon-linux-gnueabi.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
+			git remote add origin https://dopaemon:${GITHUB_TOKEN}@github.com/GCC-Builder/arm-linux-gnueabi.git
+			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/GCC-Builder/arm-dopaemon-linux-gnueabi.git)%0A%0A\`Branch: $(date +%d%m%y)-$2\`"
 		fi
-	git push -f origin $(date +%d%m%y)-9
+	git push -f origin $(date +%d%m%y)-$2
 	fi
 fi
