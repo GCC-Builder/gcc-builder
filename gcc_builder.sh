@@ -1,9 +1,9 @@
 echo "**GCC Cross-Compiler Builder**"
 echo "**********dopaemonCI***********"
 
-GCC_OUTPUT_PATH=/home/ubuntu/gcc-builder/build/gcc-bin
-SRC_PATH=/home/ubuntu/gcc-builder/build/src
-GCC_PATH=/home/ubuntu/gcc-builder/build/gcc
+GCC_OUTPUT_PATH=/tmp/ci/build/gcc-bin
+SRC_PATH=/tmp/ci/build/src
+GCC_PATH=/tmp/ci/build/gcc
 
 rm -rf ${GCC_OUTPUT_PATH} ${SRC_PATH} ${GCC_PATH}
 

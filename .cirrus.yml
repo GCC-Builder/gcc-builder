@@ -32,14 +32,11 @@ task:
   gcc_9_aarch64_packages_script:
     - unset C_INCLUDE_PATH
     - cd /tmp/ci
-    - mkdir -p build
-    - git clone -b master --single-branch https://github.com/GCC-Builder/aarch64-dopaemon-linux-gnu gcc
-    - cp -r gcc/gcc_builder.sh build/
-    - chmod +x build/gcc_builder.sh
+    - git clone -b master --single-branch https://github.com/GCC-Builder/gcc-builder.git gcc
+    - cp -r gcc/gcc_builder.sh /tmp/ci/
+    - chmod +x gcc_builder.sh
     - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-9 build/gcc --depth=1
-    - cd build/
     - ./gcc_builder.sh aarch64-linux-gnu GCC-9 | ts '[%Y-%m-%d %H:%M:%S]'
-    - ls
 
 task:
   name: Compile aarch64-linux-gnu GCC 10
@@ -66,10 +63,8 @@ task:
     - unset C_INCLUDE_PATH
     - cd /tmp/ci
     - mkdir -p build
-    - git clone -b master --single-branch https://github.com/GCC-Builder/aarch64-do>
-    - cp -r gcc/gcc_builder.sh build/
-    - chmod +x build/gcc_builder.sh
-    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --de>
-    - cd build/
-    - ./gcc_builder.sh aarch64-linux-gnu GCC-10 | ts '[%Y-%m-%d %H:%M:%>
-    - ls
+    - git clone -b master --single-branch https://github.com/GCC-Builder/gcc-builder.git gcc
+    - cp -r gcc/gcc_builder.sh /tmp/ci/
+    - chmod +x gcc_builder.sh
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --depth=1
+    - ./gcc_builder.sh aarch64-linux-gnu GCC-10 | ts '[%Y-%m-%d %H:%M:%S]'
