@@ -22,7 +22,7 @@ task:
   install_packages_script:
     - rm -rf /tmp/ci/*
     - apt-get update
-    - apt-get install -yq libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
+    - apt-get install -yq ubuntu-minimal git libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl wget expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
     - echo "dopaemon" > /etc/hostname
     - git config --global user.name "dopaemon"
     - git config --global user.email "polarisdp@gmail.com"
@@ -52,7 +52,7 @@ task:
   install_packages_script:
     - rm -rf /tmp/ci/*
     - apt-get update
-    - apt-get install -yq libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
+    - apt-get install -yq ubuntu-minimal git libdebuginfod-dev libclang-dev babeltrace help2man moreutils autoconf automake axel bc bison build-essential curl wget expat flex g++ gawk gcc gnupg gperf libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp patch patchelf pkg-config python2 python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev
     - echo "dopaemon" > /etc/hostname
     - git config --global user.name "dopaemon"
     - git config --global user.email "polarisdp@gmail.com"
