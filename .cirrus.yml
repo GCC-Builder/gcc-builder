@@ -10,7 +10,7 @@ task:
   only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
   skip: $CIRRUS_BRANCH != 'master'
   arm_container:
-    image: arm64v8/ubuntu:22.04
+    image: arm64v8/debian:bullseye-slim
     cpu: 4
     memory: 8G
   install_packages_script:
@@ -20,13 +20,13 @@ task:
     - git config --global user.name "dopaemon"
     - git config --global user.email "polarisdp@gmail.com"
     - git config --global credential.helper store
-  gcc_10_aarch64_packages_script:
+  gcc_9_aarch64_packages_script:
     - cd /tmp/ci
     - mkdir -p build
     - git clone -b master --single-branch https://github.com/dopaemon/aarch64-dopaemon-linux-gnu gcc
     - cp -r gcc/gcc_builder.sh build/
     - chmod +x build/gcc_builder.sh
-    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --depth=1
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-9 build/gcc --depth=1
     - cd build/
     - ./gcc_builder.sh aarch64-dopaemon-linux-gnu master | ts '[%Y-%m-%d %H:%M:%S]'
     - ls
