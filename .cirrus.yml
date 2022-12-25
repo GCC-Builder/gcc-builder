@@ -13,7 +13,7 @@ env:
 task:
   name: Compile aarch64-linux-gnu GCC 9
 
-  only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
+  only_if: $CIRRUS_REPO_OWNER == 'GCC-Builder' && $CIRRUS_BRANCH == 'master'
   skip: $CIRRUS_BRANCH != 'master'
   arm_container:
     image: arm64v8/ubuntu:22.04
@@ -41,7 +41,7 @@ task:
 task:
   name: Compile aarch64-linux-gnu GCC 10
 
-  only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
+  only_if: $CIRRUS_REPO_OWNER == 'GCC-Builder' && $CIRRUS_BRANCH == 'master'
   skip: $CIRRUS_BRANCH != 'master'
   depends_on:
     - Compile aarch64-linux-gnu GCC 9
