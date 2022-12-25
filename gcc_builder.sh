@@ -1,8 +1,8 @@
 echo "**GCC Cross-Compiler Builder**"
-echo "**********MaestroCI***********"
+echo "**********dopaemonCI***********"
 
 GCC_OUTPUT_PATH=/build/gcc-bin
-SRC_PATH=/build/src 
+SRC_PATH=/build/src
 GCC_PATH=/build/gcc
 TARGET=$1
 
@@ -11,7 +11,7 @@ function sendTG() {
 }
 
 rm -rf $GCC_OUTPUT_PATH && mkdir $GCC_OUTPUT_PATH && cd $GCC_OUTPUT_PATH && rm -rf /tmp/build-*
-rm -rf $SRC_PATH 
+rm -rf $SRC_PATH
 
 mkdir $SRC_PATH
 cd $SRC_PATH
@@ -136,29 +136,29 @@ jobs
 kill %1
 
 if [[ -n $(${GCC_OUTPUT_PATH}/bin/${TARGET}-gcc --version) ]]; then 
-cd ${GCC_OUTPUT_PATH}
-git init
-git add .
-git commit -m "MaestroCI: ${TARGET}-$2 $(date +%d%m%y)" --signoff
-if [[ "$2" == "master" ]]; then
-git checkout -b $(date +%d%m%y)
-if [[ "$1" == "aarch64-maestro-linux-gnu" ]]; then
-git remote add origin https://baalajimaestro:${GH_PERSONAL_TOKEN}@github.com/baalajimaestro/aarch64-maestro-linux-android.git
-sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/baalajimaestro/aarch64-maestro-linux-android.git)%0A%0A`Branch: $(date +%d%m%y)`"
-else
-git remote add origin https://baalajimaestro:${GH_PERSONAL_TOKEN}@github.com/baalajimaestro/arm-maestro-linux-gnueabi.git
-sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/baalajimaestro/arm-maestro-linux-gnueabi.git)%0A%0A`Branch: $(date +%d%m%y)`"
-fi
-git push -f origin $(date +%d%m%y)
-else
-git checkout -b $(date +%d%m%y)-9
-if [[ "$1" == "aarch64-maestro-linux-gnu" ]]; then
-git remote add origin https://baalajimaestro:${GH_PERSONAL_TOKEN}@github.com/baalajimaestro/aarch64-maestro-linux-android.git
-sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/baalajimaestro/aarch64-maestro-linux-android.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
-else
-git remote add origin https://baalajimaestro:${GH_PERSONAL_TOKEN}@github.com/baalajimaestro/arm-maestro-linux-gnueabi.git
-sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/baalajimaestro/arm-maestro-linux-gnueabi.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
-fi
-git push -f origin $(date +%d%m%y)-9
-fi
+	cd ${GCC_OUTPUT_PATH}
+	git init
+	git add .
+	git commit -m "dopaemonCI: ${TARGET}-$2 $(date +%d%m%y)" --signoff
+	if [[ "$2" == "master" ]]; then
+		git checkout -b $(date +%d%m%y)
+		if [[ "$1" == "aarch64-dopaemon-linux-gnu" ]]; then
+			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/aarch64-dopaemon-linux-android.git
+			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/dopaemon/aarch64-dopaemon-linux-android.git)%0A%0A`Branch: $(date +%d%m%y)`"
+		else
+			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/arm-dopaemon-linux-gnueabi.git
+			sendTG "`Pushing GCC ${TARGET} to `[link](https://github.com/dopaemon/arm-dopaemon-linux-gnueabi.git)%0A%0A`Branch: $(date +%d%m%y)`"
+		fi
+		git push -f origin $(date +%d%m%y)
+	else
+		git checkout -b $(date +%d%m%y)-9
+		if [[ "$1" == "aarch64-dopaemon-linux-gnu" ]]; then
+			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/aarch64-dopaemon-linux-android.git
+			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/dopaemon/aarch64-dopaemon-linux-android.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
+		else
+			git remote add origin https://dopaemon:${GH_PERSONAL_TOKEN}@github.com/dopaemon/arm-dopaemon-linux-gnueabi.git
+			sendTG "\`Pushing GCC ${TARGET} to \`[link](https://github.com/dopaemon/arm-dopaemon-linux-gnueabi.git)%0A%0A\`Branch: $(date +%d%m%y)\`"
+		fi
+	git push -f origin $(date +%d%m%y)-9
+	fi
 fi

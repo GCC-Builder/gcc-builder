@@ -1,0 +1,32 @@
+env:
+    CIRRUS_CLONE_DEPTH: 1
+    BUILD_HOSTNAME: "CirrusCI"
+    CIRRUS_WORKING_DIR: "/tmp/ci"
+    GITHUB_TOKEN: ""
+
+task:
+  name: Compile aarch64-linux-gnu
+
+  only_if: $CIRRUS_REPO_OWNER == 'dopaemon' && $CIRRUS_BRANCH == 'master'
+  skip: $CIRRUS_BRANCH != 'master'
+  arm_container:
+    image: arm64v8/ubuntu:22.04
+    cpu: 4
+    memory: 8G
+  install_packages_script:
+    - rm -rf /tmp/ci/*
+    - apt update && apt install moreutils autoconf automake axel bc bison build-essential curl expat flex g++ g++-multilib gawk gcc gcc-multilib git-core gnupg gperf lib32ncurses5-dev lib32z1-dev libtinfo5 libc6-dev libcap-dev libexpat1-dev libgmp-dev liblz4-1 liblz4-dev liblzma-dev libmpc-dev libmpfr-dev libncurses5-dev libsdl1.2-dev libssl-dev libtool libxml2 libxml2-utils lzma liblzma5 lzop ncftp ncurses-dev patch patchelf pkg-config python python-all-dev re2c schedtool squashfs-tools texinfo unzip w3m xsltproc zip zlib1g-dev lzip libxml-simple-perl libisl-dev -y
+    - echo "dopaemon" > /etc/hostname
+    - git config --global user.name "dopaemon"
+    - git config --global user.email "polarisdp@gmail.com"
+    - git config --global credential.helper store
+  gcc_10_aarch64_packages_script:
+    - cd /tmp/ci
+    - mkdir -p build
+    - git clone -b master --single-branch https://github.com/dopaemon/aarch64-dopaemon-linux-gnu gcc
+    - cp -r gcc/gcc_builder.sh build/
+    - chmod +x build/gcc_builder.sh
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --depth=1
+    - cd build/
+    - ./gcc_builder.sh aarch64-dopaemon-linux-gnu master | ts '[%Y-%m-%d %H:%M:%S]'
+    - ls
