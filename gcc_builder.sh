@@ -1,9 +1,9 @@
 echo "**GCC Cross-Compiler Builder**"
 echo "**********dopaemonCI***********"
 
-GCC_OUTPUT_PATH=/build/gcc-bin
-SRC_PATH=/build/src
-GCC_PATH=/build/gcc
+GCC_OUTPUT_PATH=/tmp/ci/build/gcc-bin
+SRC_PATH=/tmp/ci/build/src
+GCC_PATH=/tmp/ci/build/gcc
 TARGET=$1
 
 function sendTG() {
