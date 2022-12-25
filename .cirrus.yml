@@ -35,7 +35,7 @@ task:
     - git clone -b master --single-branch https://github.com/GCC-Builder/gcc-builder.git gcc
     - cp -r gcc/gcc_builder.sh /tmp/ci/
     - chmod +x gcc_builder.sh
-    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-9 build/gcc --depth=1
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-9 /tmp/ci/build/gcc --depth=1
     - ./gcc_builder.sh aarch64-linux-gnu GCC-9 | ts '[%Y-%m-%d %H:%M:%S]'
 
 task:
@@ -66,5 +66,5 @@ task:
     - git clone -b master --single-branch https://github.com/GCC-Builder/gcc-builder.git gcc
     - cp -r gcc/gcc_builder.sh /tmp/ci/
     - chmod +x gcc_builder.sh
-    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 build/gcc --depth=1
+    - git clone https://gcc.gnu.org/git/gcc.git -b releases/gcc-10 /tmp/ci/build/gcc --depth=1
     - ./gcc_builder.sh aarch64-linux-gnu GCC-10 | ts '[%Y-%m-%d %H:%M:%S]'
