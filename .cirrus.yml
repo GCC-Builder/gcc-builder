@@ -17,8 +17,8 @@ task:
   skip: $CIRRUS_BRANCH != 'master'
   arm_container:
     image: arm64v8/ubuntu:22.04
-    cpu: 4
-    memory: 8G
+    cpu: 6
+    memory: 16G
   install_packages_script:
     - rm -rf /tmp/ci/*
     - apt-get update
@@ -47,8 +47,8 @@ task:
     - Compile aarch64-linux-gnu GCC 9
   arm_container:
     image: arm64v8/ubuntu:22.04
-    cpu: 4
-    memory: 8G
+    cpu: 6
+    memory: 16G
   install_packages_script:
     - rm -rf /tmp/ci/*
     - apt-get update
